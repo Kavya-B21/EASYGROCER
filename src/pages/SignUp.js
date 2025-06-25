@@ -77,6 +77,8 @@ export default function SignUp() {
     <Box
       sx={{
         minHeight: '100vh',
+        backgroundImage: `url("/bg.jpg")`,
+        backgroundSize: 'cover',
         background: `linear-gradient(135deg, ${theme.palette.primary[50]} 0%, ${theme.palette.secondary[100]} 100%)`,
         display: 'flex',
         alignItems: 'center',
@@ -95,7 +97,6 @@ export default function SignUp() {
           overflow: 'hidden'
         }}
       >
-        {/* Left Image Side */}
         <Box
           sx={{
             flex: 1,
@@ -116,7 +117,6 @@ export default function SignUp() {
           />
         </Box>
 
-        {/* Right Form Side */}
         <Box
           sx={{
             flex: 1,
@@ -139,10 +139,10 @@ export default function SignUp() {
             )}
 
             <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%' }}>
-              <Stack spacing={2}>
+              <Stack spacing={2}><div style={{display: 'flex', width:'100%',gap:20}}>
                 <TextField
                   required
-                  fullWidth
+                  sx={{width:'50%'}}
                   label="First Name"
                   value={displayName}
                   onChange={e => setDisplayName(e.target.value)}
@@ -156,7 +156,7 @@ export default function SignUp() {
                 />
                 <TextField
                   required
-                  fullWidth
+                  sx={{width:'50%'}}
                   label="Last Name"
                   value={lastName}
                   onChange={e => setLastName(e.target.value)}
@@ -168,6 +168,7 @@ export default function SignUp() {
                     )
                   }}
                 />
+                </div>
                 <TextField
                   required
                   fullWidth
@@ -229,24 +230,7 @@ export default function SignUp() {
                     )
                   }}
                 />
-                <TextField
-                  fullWidth
-                  label="Profile Photo URL (optional)"
-                  value={photoURL}
-                  onChange={e => setPhotoURL(e.target.value)}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <ImageIcon />
-                      </InputAdornment>
-                    ),
-                    endAdornment: preview ? (
-                      <InputAdornment position="end">
-                        <Avatar src={preview} sx={{ width: 32, height: 32 }} />
-                      </InputAdornment>
-                    ) : null
-                  }}
-                />
+                
 
                 <Button
                   type="submit"

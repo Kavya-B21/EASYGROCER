@@ -40,12 +40,16 @@ export default function SignIn() {
   };
 
   return (
+    <div>
+      <div></div>
     <Box
       sx={{
         minHeight: '100vh',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        backgroundImage: `url("/bg.jpg")`,
+        backgroundSize: 'cover',
         background: `linear-gradient(135deg, ${theme.palette.primary[50]} 0%, ${theme.palette.secondary[100]} 100%)`,
         p: 2
       }}
@@ -62,7 +66,6 @@ export default function SignIn() {
   }}
   elevation={8}
 >
-  {/* Left Image Section */}
   <Box
     sx={{
       flex: 1,
@@ -82,8 +85,6 @@ export default function SignIn() {
       }}
     />
   </Box>
-
-  {/* Right Sign-In Form Section */}
   <Box
     sx={{
       flex: 1,
@@ -166,5 +167,6 @@ export default function SignIn() {
 </Card>
 
     </Box>
+    </div>
   );
 }
