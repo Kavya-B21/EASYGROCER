@@ -11,6 +11,7 @@ import Profile    from './pages/Profile';
 import Home       from './pages/Home';
 import AdminDashboard from './pages/AdminDashboard';
 import ProductForm from './pages/ProductForm';
+import EditProfile from './pages/Edit';
 function App() {
   return (
     <AuthProvider>
@@ -47,6 +48,8 @@ function App() {
     <ProductForm />
   </PrivateRoute>
 }/>
+<Route path="/profile/edit/:id" element={<EditProfile/>} />
+
         </Routes>
       </BrowserRouter>
     </AuthProvider>

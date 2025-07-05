@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Card, Typography, Avatar, Stack, Divider,Button,CardActions, } from '@mui/material';
+import { Box, Card, Typography, Avatar, Stack, Divider,Button,CardActions,Tooltip, } from '@mui/material';
 import { auth, db } from '../firebase/config';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
-
-
+import { useNavigate, Link as RouterLink }    from 'react-router-dom';
+import EditIcon         from '@mui/icons-material/Edit';
 export default function UserProfile() {
   const [userData, setUserData] = useState(null);
-
+  const navigate  = useNavigate();
   useEffect(() => {
     const fetchUserData = async () => {
       const user = auth.currentUser;
@@ -24,7 +24,7 @@ export default function UserProfile() {
 
   if (!userData) return <Typography>Loading...</Typography>;
 
-  const { displayName, lastName, email, phoneNumber, address, photoURL } = userData;
+  const { uid,displayName, lastName, email, phoneNumber, address, photoURL } = userData;
 
   return (
     <Box
@@ -50,7 +50,13 @@ export default function UserProfile() {
       >
         <Card sx={{ bgcolor: 'rgba(25, 203, 25, 0.3)',flex: 1, height: 350, p: 3, textAlign: 'center',borderRadius: '36px' }}>
           <Avatar src={photoURL} alt="Profile" sx={{ width: 200, height: 200,bgcolor: 'rgba(25, 203, 25, 0.3)', borderRadius: '36px', mx: 'auto', mb: 2, objectFit: 'cover' }} />
-          <Typography variant="h6">{displayName} {lastName}</Typography>
+          <Typography variant="h6">{displayName} {lastName}
+            <Tooltip title="Edit">
+    <Button size="small" color='black' onClick={() => navigate(`/profile/edit/${uid}`)}>
+      <EditIcon fontSize="small" />
+    </Button>
+  </Tooltip>
+          </Typography>
            <CardActions sx={{ p: 2 }}>
             <Button
               variant="contained"
