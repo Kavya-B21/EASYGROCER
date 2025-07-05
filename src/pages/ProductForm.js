@@ -1,4 +1,3 @@
-// ===== src/pages/ProductForm.jsx =====
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -19,8 +18,6 @@ import {
   InputAdornment
 } from '@mui/material';
 
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import EditIcon from '@mui/icons-material/Edit';
 import CategoryIcon from '@mui/icons-material/Category';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import ImageIcon from '@mui/icons-material/Image';
@@ -191,7 +188,7 @@ export default function ProductForm() {
               sx={{
                 display: 'flex',
                 justifyContent: 'flex-start',
-                pr: 10// adjust padding if needed
+                pr: 10
               }}
             >
               <Stack spacing={2} sx={{ width: '60%', maxWidth: 700 }}>

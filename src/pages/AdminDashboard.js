@@ -1,4 +1,3 @@
-// ===== src/pages/AdminDashboard.jsx =====
 import React, { useEffect, useState }         from 'react';
 import { useNavigate, Link as RouterLink }    from 'react-router-dom';
 import {
@@ -114,8 +113,8 @@ export default function AdminDashboard() {
           sx={{
             borderRadius: 2,
             overflow: 'hidden',
-            backgroundColor: 'rgba(126, 218, 28, 0.33)', // semi-transparent white
-    backdropFilter: 'blur(8px)',                 // optional blur effect
+            backgroundColor: 'rgba(126, 218, 28, 0.33)', 
+    backdropFilter: 'blur(8px)',                 
     
           }}
         >
@@ -127,8 +126,8 @@ export default function AdminDashboard() {
                     key={h}
                     align={h === 'Actions' ? 'right' : 'left'}
                     sx={{
-            backgroundColor: 'rgba(143, 239, 8, 0.46)', // semi-transparent blue (customize if needed)
-            backdropFilter: 'blur(4px)',                // subtle blur effect
+            backgroundColor: 'rgba(143, 239, 8, 0.46)', 
+            backdropFilter: 'blur(4px)',                
             color: 'black',
             fontWeight: 'bold'
           }}
@@ -145,8 +144,8 @@ export default function AdminDashboard() {
     hover
     sx={{
       backgroundColor: index % 2 === 0
-        ? 'rgba(255, 255, 255, 0.2)' // even
-        : 'rgba(215, 241, 67, 0.31)' // odd
+        ? 'rgba(255, 255, 255, 0.2)' 
+        : 'rgba(215, 241, 67, 0.31)' 
     }}
   >
 
