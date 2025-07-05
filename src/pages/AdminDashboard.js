@@ -99,7 +99,7 @@ export default function AdminDashboard() {
             to="/admin/product/new"
             sx={{
               background: 'linear-gradient(90deg,rgb(25, 203, 25),rgb(248, 248, 10))',
-              color: '#fff',
+              color: 'black',
               '&:hover': { opacity: 0.9 }
             }}
           >
@@ -155,7 +155,7 @@ export default function AdminDashboard() {
                   <TableCell>{prod.category}</TableCell>
                   <TableCell>₹{prod.price}</TableCell>
                   <TableCell>{prod.unit}</TableCell>
-                  <TableCell>{prod.stock}kg</TableCell>
+                  <TableCell>{prod.stock}{prod.unit}</TableCell>
                   <TableCell
                     sx={{
                       maxWidth: 200,
