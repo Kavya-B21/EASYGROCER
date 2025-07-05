@@ -19,13 +19,13 @@ import {
   CircularProgress,
   Typography,
   Tooltip,
-  useTheme
+  useTheme,
+  Avatar
 }                                              from '@mui/material';
 import AddIcon          from '@mui/icons-material/Add';
 import EditIcon         from '@mui/icons-material/Edit';
 import DeleteIcon       from '@mui/icons-material/Delete';
-import { collection, onSnapshot, doc, deleteDoc }
-                                              from 'firebase/firestore';
+import { collection, onSnapshot, doc, deleteDoc }from 'firebase/firestore';
 import { db }           from '../firebase/config';
 
 export default function AdminDashboard() {
@@ -116,14 +116,13 @@ export default function AdminDashboard() {
             overflow: 'hidden',
             backgroundColor: 'rgba(126, 218, 28, 0.33)', // semi-transparent white
     backdropFilter: 'blur(8px)',                 // optional blur effect
-    '& .MuiTableRow-root:nth-of-type(even)': {
-      backgroundColor: 'rgba(255, 255, 255, 0.1)'}
+    
           }}
         >
           <Table stickyHeader>
             <TableHead>
               <TableRow>
-                {['Name', 'Category', 'Price', 'Description', 'Actions'].map(h => (
+                {['Name', 'Category', 'Price','Unit','Stock','Description', 'Actions'].map(h => (
                   <TableCell
                     key={h}
                     align={h === 'Actions' ? 'right' : 'left'}
@@ -140,11 +139,23 @@ export default function AdminDashboard() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {products.map(prod => (
-                <TableRow key={prod.id} hover>
-                  <TableCell>{prod.name}</TableCell>
+              {products.map((prod, index) => (
+  <TableRow
+    key={prod.id}
+    hover
+    sx={{
+      backgroundColor: index % 2 === 0
+        ? 'rgba(255, 255, 255, 0.2)' // even
+        : 'rgba(215, 241, 67, 0.31)' // odd
+    }}
+  >
+
+                  <TableCell sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    {prod.name}<Avatar src={prod.imageUrl} sx={{ width: 32, height: 32 }} /></TableCell>
                   <TableCell>{prod.category}</TableCell>
                   <TableCell>₹{prod.price}</TableCell>
+                  <TableCell>{prod.unit}</TableCell>
+                  <TableCell>{prod.stock}kg</TableCell>
                   <TableCell
                     sx={{
                       maxWidth: 200,

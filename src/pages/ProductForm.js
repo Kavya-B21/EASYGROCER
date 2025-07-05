@@ -1,6 +1,6 @@
 // ===== src/pages/ProductForm.jsx =====
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams }     from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   Avatar,
   Box,
@@ -15,15 +15,18 @@ import {
   Stack,
   Typography,
   Alert,
-  useTheme
+  useTheme,
+  InputAdornment
 } from '@mui/material';
 
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import EditIcon             from '@mui/icons-material/Edit';
-import CategoryIcon         from '@mui/icons-material/Category';
-import MonetizationOnIcon   from '@mui/icons-material/MonetizationOn';
-import ImageIcon            from '@mui/icons-material/Image';
-import DescriptionIcon      from '@mui/icons-material/Description';
+import EditIcon from '@mui/icons-material/Edit';
+import CategoryIcon from '@mui/icons-material/Category';
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import ImageIcon from '@mui/icons-material/Image';
+import DescriptionIcon from '@mui/icons-material/Description';
+import BalanceIcon from '@mui/icons-material/Balance';
+import ProductionQuantityLimitsIcon from '@mui/icons-material/ProductionQuantityLimits';
 
 import {
   collection,
@@ -37,20 +40,24 @@ import {
 import { db } from '../firebase/config';
 
 export default function ProductForm() {
-  const theme    = useTheme();
-  const { id }   = useParams();  // 'new' or doc ID
+  const theme = useTheme();
+  const { id } = useParams(); // 'new' or doc ID
   const navigate = useNavigate();
-  const isEdit   = id && id !== 'new';
+  const isEdit = id && id !== 'new';
 
-  const [form, setForm]     = useState({
+  const [form, setForm] = useState({
     name: '',
     category: '',
     price: '',
+    unit:'',
+    stock:'',
     imageUrl: '',
     description: ''
   });
   const [loading, setLoading] = useState(isEdit);
-  const [error, setError]     = useState('');
+  const [error, setError] = useState('');
+  const [preview, setPreview] = useState('');
+
 
   useEffect(() => {
     if (isEdit) {
@@ -63,6 +70,8 @@ export default function ProductForm() {
               name: data.name,
               category: data.category,
               price: data.price.toString(),
+              unit: data.unit,
+              stock: data.stock.toString(),
               imageUrl: data.imageUrl || '',
               description: data.description || ''
             });
@@ -77,8 +86,16 @@ export default function ProductForm() {
     }
   }, [id, isEdit]);
 
-  const handleChange = field => e =>
+   const handleChange = field => e =>
     setForm(prev => ({ ...prev, [field]: e.target.value }));
+
+  useEffect(() => {
+    if (form.imageUrl) {
+      setPreview(form.imageUrl);
+    } else {
+      setPreview('');
+    }
+  }, [form.imageUrl]);
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -90,12 +107,14 @@ export default function ProductForm() {
     setLoading(true);
     try {
       const payload = {
-        name:        form.name,
-        category:    form.category,
-        price:       parseFloat(form.price),
-        imageUrl:    form.imageUrl,
+        name: form.name,
+        category: form.category,
+        price: parseFloat(form.price),
+        imageUrl: form.imageUrl,
+        unit:form.unit,
+        stock: parseFloat(form.stock),
         description: form.description,
-        updatedAt:   serverTimestamp()
+        updatedAt: serverTimestamp()
       };
       if (isEdit) {
         await setDoc(doc(db, 'products', id), payload, { merge: true });
@@ -137,20 +156,25 @@ export default function ProductForm() {
         py: 6
       }}
     >
-      <Container maxWidth="sm">
-        <Card elevation={8} sx={{ borderRadius: 7, backgroundImage: `url("/formbg.avif")`,backgroundSize: 'cover'}}>
+      <Container maxWidth={false} sx={{ px: 2 }}>
+        <Card
+          elevation={8}
+          sx={{
+            width: '1000px',
+            mx: 'auto',
+            borderRadius: 7,
+            backgroundImage: `url("/formbg.avif")`,
+            backgroundSize: 'cover'
+          }}
+        >
           <CardHeader
-            avatar={
-              <Avatar sx={{ bgcolor: theme.palette.secondary.main }}>
-                {isEdit ? <EditIcon /> : <AddCircleOutlineIcon />}
-              </Avatar>
-            }
+            
             title={
               <Typography variant="h5">
                 {isEdit ? 'Edit Product' : 'Add New Product'}
               </Typography>
             }
-            sx={{ textAlign: 'center', pt: 3 }}
+            sx={{ pt: 3, color:'black',textAlign:'center' }}
           />
 
           <CardContent>
@@ -160,8 +184,18 @@ export default function ProductForm() {
               </Alert>
             )}
 
-            <Box component="form" onSubmit={handleSubmit} noValidate>
-              <Stack spacing={2}>
+            <Box
+              component="form"
+              onSubmit={handleSubmit}
+              noValidate
+              sx={{
+                display: 'flex',
+                justifyContent: 'flex-start',
+                pr: 10// adjust padding if needed
+              }}
+            >
+              <Stack spacing={2} sx={{ width: '60%', maxWidth: 700 }}>
+
                 <TextField
                   required
                   fullWidth
@@ -169,18 +203,18 @@ export default function ProductForm() {
                   value={form.name}
                   onChange={handleChange('name')}
                   InputProps={{
-    startAdornment: (
-      <Box sx={{ mr: 1, display: 'flex', color: 'white' }}>
-        <CategoryIcon color="action" />
-      </Box>
-    ),
-    sx: {
-      color: 'white',               // text color
-    },
-  }}
-  InputLabelProps={{
-    sx: { color: 'white' },         // label color
-  }}
+                    startAdornment: (
+                      <Box sx={{ mr: 1, display: 'flex', color: 'black' }}>
+                        <CategoryIcon color="action" />
+                      </Box>
+                    ),
+                    sx: {
+                      color: 'black'
+                    }
+                  }}
+                  InputLabelProps={{
+                    sx: { color: 'black' }
+                  }}
                 />
 
                 <TextField
@@ -189,18 +223,18 @@ export default function ProductForm() {
                   value={form.category}
                   onChange={handleChange('category')}
                   InputProps={{
-    startAdornment: (
-      <Box sx={{ mr: 1, display: 'flex', color: 'white' }}>
-        <CategoryIcon color="action" />
-      </Box>
-    ),
-    sx: {
-      color: 'white',               // text color
-    },
-  }}
-  InputLabelProps={{
-    sx: { color: 'white' },         // label color
-  }}
+                    startAdornment: (
+                      <Box sx={{ mr: 1, display: 'flex', color: 'black' }}>
+                        <CategoryIcon color="action" />
+                      </Box>
+                    ),
+                    sx: {
+                      color: 'black'
+                    }
+                  }}
+                  InputLabelProps={{
+                    sx: { color: 'black' }
+                  }}
                 />
 
                 <TextField
@@ -211,13 +245,56 @@ export default function ProductForm() {
                   onChange={handleChange('price')}
                   InputProps={{
                     startAdornment: (
-                      <Box sx={{ mr: 1, display: 'flex' }}>
+                      <Box sx={{ mr: 1, display: 'flex', color: 'black' }}>
                         <MonetizationOnIcon color="action" />
                       </Box>
-                    )
+                    ),
+                    sx: {
+                      color: 'black'
+                    }
+                  }}
+                  InputLabelProps={{
+                    sx: { color: 'black' }
                   }}
                 />
-
+                <TextField
+                  fullWidth
+                  label="Measuring unit"
+                  value={form.unit}
+                  onChange={handleChange('unit')}
+                  InputProps={{
+                    startAdornment: (
+                      <Box sx={{ mr: 1, display: 'flex', color: 'black' }}>
+                        < BalanceIcon color="action" />
+                      </Box>
+                    ),
+                    sx: {
+                      color: 'black'
+                    }
+                  }}
+                  InputLabelProps={{
+                    sx: { color: 'black' }
+                  }}
+                />
+                <TextField
+                  fullWidth
+                  label="Stock Quantity"
+                  value={form.stock}
+                  onChange={handleChange('stock')}
+                  InputProps={{
+                    startAdornment: (
+                      <Box sx={{ mr: 1, display: 'flex', color: 'black' }}>
+                        < ProductionQuantityLimitsIcon color="action" />
+                      </Box>
+                    ),
+                    sx: {
+                      color: 'black'
+                    }
+                  }}
+                  InputLabelProps={{
+                    sx: { color: 'black' }
+                  }}
+                />
                 <TextField
                   fullWidth
                   label="Image URL"
@@ -225,10 +302,19 @@ export default function ProductForm() {
                   onChange={handleChange('imageUrl')}
                   InputProps={{
                     startAdornment: (
-                      <Box sx={{ mr: 1, display: 'flex' }}>
-                        <ImageIcon color="action" />
-                      </Box>
-                    )
+                      <InputAdornment position="start">
+                        <ImageIcon />
+                      </InputAdornment>
+                    ),
+                    endAdornment: preview && (
+                      <InputAdornment position="end">
+                        <Avatar src={preview} sx={{ width: 48, height: 48 }} />
+                      </InputAdornment>
+                    ),
+                    sx: { color: 'black' }
+                  }}
+                  InputLabelProps={{
+                    sx: { color: 'black' }
                   }}
                 />
 
@@ -236,15 +322,21 @@ export default function ProductForm() {
                   fullWidth
                   label="Description"
                   multiline
-                  rows={3}
+                  rows={2}
                   value={form.description}
                   onChange={handleChange('description')}
                   InputProps={{
                     startAdornment: (
-                      <Box sx={{ mr: 1, display: 'flex' }}>
+                      <Box sx={{ mr: 1, display: 'flex', color: 'black' }}>
                         <DescriptionIcon color="action" />
                       </Box>
-                    )
+                    ),
+                    sx: {
+                      color: 'black'
+                    }
+                  }}
+                  InputLabelProps={{
+                    sx: { color: 'black' }
                   }}
                 />
               </Stack>
@@ -252,10 +344,7 @@ export default function ProductForm() {
           </CardContent>
 
           <CardActions sx={{ justifyContent: 'space-between', px: 3, pb: 3 }}>
-            <Button
-              onClick={() => navigate('/admin')}
-              variant="text"
-            >
+            <Button onClick={() => navigate('/admin')} variant="text" color=''>
               Cancel
             </Button>
             <Button
