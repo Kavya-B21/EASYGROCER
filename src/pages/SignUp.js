@@ -230,6 +230,22 @@ export default function SignUp() {
                     )
                   }}
                 />
+                <TextField
+                  fullWidth
+                  label="Profile Photo URL (optional)"
+                  value={photoURL} onChange={e => setPhotoURL(e.target.value)}
+                  InputProps={{
+                    startAdornment: <InputAdornment position="start"><ImageIcon /></InputAdornment>,
+                    endAdornment: preview
+                      ? (
+                        <InputAdornment position="end">
+                          <Avatar src={preview} sx={{ width: 32, height: 32 }} />
+                        </InputAdornment>
+                      )
+                      : null
+                  }}
+                  sx={{ borderRadius: 2 }}
+                />
                 
 
                 <Button

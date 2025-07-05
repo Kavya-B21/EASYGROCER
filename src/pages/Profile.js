@@ -1,187 +1,95 @@
-// ===== src/pages/Profile.jsx =====
 import React, { useEffect, useState } from 'react';
-import { auth, db }                    from '../firebase/config';
+import { Box, Card, Typography, Avatar, Stack, Divider,Button,CardActions, } from '@mui/material';
+import { auth, db } from '../firebase/config';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { doc, getDoc }                 from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 
-import {
-  Avatar,
-  Box,
-  Button,
-  Card,
-  CardHeader,
-  CardContent,
-  CardActions,
-  CircularProgress,
-  Container,
-  Divider,
-  Link,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Typography,
-  useTheme
-} from '@mui/material';
 
-import EmailIcon         from '@mui/icons-material/Email';
-import PhoneIcon         from '@mui/icons-material/Phone';
-import HomeIcon          from '@mui/icons-material/Home';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-
-export default function Profile() {
-  const theme = useTheme();
-  const [user, setUser]               = useState(null);
-  const [profileData, setProfileData] = useState(null);
-  const [loading, setLoading]         = useState(true);
+export default function UserProfile() {
+  const [userData, setUserData] = useState(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async firebaseUser => {
-      if (firebaseUser) {
-        setUser(firebaseUser);
-        const snap = await getDoc(doc(db, 'users', firebaseUser.uid));
-        if (snap.exists()) {
-          const data = snap.data();
-          setProfileData({
-            ...data,
-            createdAt: data.createdAt.toDate()
-          });
+    const fetchUserData = async () => {
+      const user = auth.currentUser;
+      if (user) {
+        const docRef = doc(db, 'users', user.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setUserData(docSnap.data());
         }
-      } else {
-        setUser(null);
-        setProfileData(null);
       }
-      setLoading(false);
-    });
-    return unsubscribe;
+    };
+    fetchUserData();
   }, []);
 
-  if (loading) {
-    return (
-      <Container sx={{ textAlign: 'center', mt: 8 }}>
-        <CircularProgress />
-      </Container>
-    );
-  }
+  if (!userData) return <Typography>Loading...</Typography>;
 
-  if (!user) {
-    return (
-      <Container sx={{ textAlign: 'center', mt: 8 }}>
-        <Typography variant="h6">
-          You’re not signed in. Please{' '}
-          <Link href="/signin" underline="hover">
-            Sign In
-          </Link>.
-        </Typography>
-      </Container>
-    );
-  }
-
-  const photo = user.photoURL || profileData?.photoURL;
-  const joined = profileData?.createdAt
-    ? profileData.createdAt.toLocaleDateString()
-    : '';
+  const { displayName, lastName, email, phoneNumber, address, photoURL } = userData;
 
   return (
     <Box
       sx={{
         minHeight: '100vh',
-        background: `linear-gradient(135deg, ${theme.palette.primary[50]} 0%, ${theme.palette.secondary[100]} 100%)`,
-        py: 6
+        backgroundImage: `url("/profile.jpg")`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        p: 4,
+        display: 'flex',
+        justifyContent: 'center',
       }}
     >
-      <Container maxWidth="sm">
-        <Card elevation={8} sx={{ borderRadius: 3 }}>
-          <CardHeader
-            avatar={
-              <Avatar
-                src={photo}
-                alt={user.displayName || profileData?.displayName}
-                sx={{
-                  width: 96,
-                  height: 96,
-                  border: `3px solid ${theme.palette.secondary.main}`
-                }}
-              />
-            }
-            title={
-              <Typography variant="h4">
-                {user.displayName || profileData?.displayName}
-              </Typography>
-            }
-            subheader={
-              joined && (
-                <Box display="flex" alignItems="center" color="text.secondary">
-                  <CalendarTodayIcon fontSize="small" sx={{ mr: 0.5 }} />
-                  <Typography variant="body2">
-                    Member since {joined}
-                  </Typography>
-                </Box>
-              )
-            }
-            sx={{ textAlign: 'center', pt: 4 }}
-          />
-
-          <Divider />
-
-          <CardContent>
-            <List disablePadding>
-              <ListItem>
-                <ListItemIcon>
-                  <EmailIcon color="primary" />
-                </ListItemIcon>
-                <ListItemText
-                  primary="Email"
-                  secondary={user.email}
-                />
-              </ListItem>
-
-              {profileData?.phoneNumber && (
-                <ListItem>
-                  <ListItemIcon>
-                    <PhoneIcon color="primary" />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary="Phone"
-                    secondary={profileData.phoneNumber}
-                  />
-                </ListItem>
-              )}
-
-              {profileData?.address && (
-                <ListItem>
-                  <ListItemIcon>
-                    <HomeIcon color="primary" />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary="Address"
-                    secondary={profileData.address}
-                  />
-                </ListItem>
-              )}
-            </List>
-          </CardContent>
-
-          <Divider />
-
-          <CardActions sx={{ p: 2 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: { xs: 'column', md: 'row' },
+          justifyContent: 'center',
+          gap: 4,
+          width: '80%',
+        }}
+      >
+        <Card sx={{ bgcolor: 'rgba(25, 203, 25, 0.3)',flex: 1, height: 350, p: 3, textAlign: 'center',borderRadius: '36px' }}>
+          <Avatar src={photoURL} alt="Profile" sx={{ width: 200, height: 200,bgcolor: 'rgba(25, 203, 25, 0.3)', borderRadius: '36px', mx: 'auto', mb: 2, objectFit: 'cover' }} />
+          <Typography variant="h6">{displayName} {lastName}</Typography>
+           <CardActions sx={{ p: 2 }}>
             <Button
               variant="contained"
               fullWidth
               sx={{
-                py: 1.5,
-                borderRadius: 2,
-                background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
-                color: '#fff',
-                '&:hover': { opacity: 0.9 }
-              }}
+                    py: 1.5,
+                    borderRadius: 2,
+                    fontWeight: 'bold',
+                    background: `linear-gradient(90deg, green, yellow)`,
+                    color: '#fff',
+                    '&:hover': {
+                      opacity: 0.9
+                    }
+                  }}
               onClick={() => signOut(auth)}
             >
               Sign Out
             </Button>
           </CardActions>
         </Card>
-      </Container>
+
+        <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <Card sx={{bgcolor:'rgb(248, 248, 10,0.3)', width: '100%', height: 180, textAlign: 'center', p: 3,borderRadius: '36px' }}>
+            <Typography variant="h6" gutterBottom>Contact Information</Typography>
+            <Divider sx={{ mb: 2 }} />
+            <Stack spacing={1}>
+              <Typography><strong>Email:</strong> {email}</Typography>
+              <Typography><strong>Phone:</strong> {phoneNumber}</Typography>
+              <Typography><strong>Address:</strong> {address}</Typography>
+            </Stack>
+          </Card>
+
+          <Card sx={{bgcolor:'rgb(248, 248, 10,0.3)', width: '100%', height: 95, textAlign: 'center', p: 3,borderRadius: '36px' }}>
+            <Typography variant="h6" gutterBottom>Order Details</Typography>
+            <Divider sx={{ mb: 2 }} />
+            <Typography>No orders yet.</Typography>
+          </Card>
+        </Box>
+      </Box>
     </Box>
   );
 }
